@@ -29,9 +29,9 @@
         var outputFileName = Path.Join(directory, "out.dat");
         using (var writer = new StreamWriter(outputFileName))
         {
-            var procedure = (int l, int r) =>
+            var procedure = (int start, int end) =>
             {
-                for (int i = l; i < r; i++)
+                for (int i = start; i < end; i++)
                 {
                     var res = ChooseOperation(files[i]);
                     lock (writer)
@@ -44,11 +44,11 @@
             var threads = new List<Thread>();
             for (int i = 0; i < thr_count; i++)
             {
-                var l = i * chunk;
-                var r = (i + 1) * chunk + ((i == thr_count - 1) ? files.Length % thr_count : 0);
+                var start = i * chunk;
+                var end = (i + 1) * chunk + ((i == thr_count - 1) ? files.Length % thr_count : 0);
                 var thread = new Thread(() =>
                 {
-                    procedure(l, r);
+                    procedure(start, end);
                 });
                 thread.Start();
                 threads.Add(thread);
